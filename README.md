@@ -1,0 +1,1 @@
+# StarRail Voice Sorting Scripts
