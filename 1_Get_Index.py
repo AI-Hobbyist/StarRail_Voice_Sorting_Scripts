@@ -20,10 +20,16 @@ atlas = os.path.join(StarRailData_path, "./ExcelOutput/VoiceAtlas.json")
 dialogue = os.path.join(StarRailData_path, "./ExcelOutput/TalkSentenceConfig.json")
 voiceconfig = os.path.join(StarRailData_path, "./ExcelOutput/VoiceConfig.json")
 avatarconfig = os.path.join(StarRailData_path, "./ExcelOutput/AvatarConfig.json")
+
+# The following two dicts loaded here may have unexpected results,
+# because they have the same keys.
 textmap = os.path.join(StarRailData_path, f"./TextMap/TextMap{TextMap_Language}.json")
+textmap_en = os.path.join(StarRailData_path, f"./TextMap/TextMapEN.json")
 
 with open(textmap, encoding="utf-8") as f:
     textmap_data = json.load(f)
+with open(textmap_en, encoding="utf-8") as f:
+    textmap_en_data = json.load(f)
 
 if TextMap_Language == "CN":
     Voice_Language = "Chinese(PRC)"
@@ -110,7 +116,6 @@ def get_cutscene_content():
     return output_data
 
 def add_voice_speaker(voicepath: dict):
-    avatar_listmap = []
     avatar_dictmap = {}
     with open(avatarconfig, encoding="utf-8") as f:
         parsed_data = json.load(f)
@@ -118,8 +123,7 @@ def add_voice_speaker(voicepath: dict):
     for _, value in parsed_data.items():
         sp_tag = value.get("AvatarVOTag")
         sp_NameHash = value["AvatarName"]["Hash"]
-        sp_NameText = textmap_data.get(str(sp_NameHash))
-        avatar_listmap.append(sp_tag)
+        sp_NameText = textmap_en_data.get(str(sp_NameHash))
         avatar_dictmap[str(sp_tag)] = sp_NameText
     
     # Parse character name from string(VoicePath)
@@ -127,15 +131,15 @@ def add_voice_speaker(voicepath: dict):
     voice_filename_piece = voice_filename.split("_")
     for p in voice_filename_piece:
         # non-player character name with voice's language tag
-        if p in avatar_listmap:
+        if p in avatar_dictmap:
             speaker_name = avatar_dictmap[str(p)]
             voicepath.update(Speaker=speaker_name)
             break
         elif p == "player":
             if voice_filename.endswith("_m"):
-                speaker_name = "playerboy"
+                speaker_name = "PlayerBoy"
             elif voice_filename.endswith("_f"):
-                speaker_name = "playergirl"
+                speaker_name = "PlayerGirl"
             else:
                 speaker_name = "Unknown"
             voicepath.update(Speaker=speaker_name)
