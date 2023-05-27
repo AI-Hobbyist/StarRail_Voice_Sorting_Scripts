@@ -2,6 +2,8 @@
 
 1. 登录时会请求分发，抓包易得此链接：https://prod-gf-cn-dp01.bhsr.com/query_gateway?version=CNPRODWin1.0.5&t=xxxxxxxxxx&uid=xxxxxxxxx&language_type=1&platform_type=3&dispatch_seed=xxxxxxxxxx&channel_id=1&sub_channel_id=2&is_need_url=1
 
+    > 抓包工具：Fiddler（+ Proxifier）
+
 2. Base64 解码返回 Body，可以得到：https://autopatchcn.bhsr.com/asb/V1.0Live/output_4186973_52d0b74c56
 
     > 在线加解密工具：https://gchq.github.io/CyberChef/
