@@ -25,6 +25,9 @@ for wav in tq.tqdm(files):
         path = data.get(file_hash).get('VoiceName')
         wav_path = source + "/" + os.path.dirname(path)
         dest_file = dest + '/' + path
+        dis_dir = os.path.dirname(dest_file)
+        if not os.path.exists(dis_dir):
+            os.makedirs(dis_dir)
         move(wav, dest_file)
     except Exception as e:
         pass
