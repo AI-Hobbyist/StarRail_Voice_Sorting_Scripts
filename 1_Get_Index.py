@@ -8,7 +8,7 @@ from fnvhash import fnv1_64
 parser = argparse.ArgumentParser()
 parser.add_argument('--source', type=str, help='Dim 的星穹铁道数据文件路径', required=True)
 parser.add_argument('--dest', type=str, help='目标路径，可选，默认为当前目录', default='./')
-parser.add_argument('--lang', type=str, help='语言，可选 CHS/EN/JP/KR，默认为 CHS', default='CN')
+parser.add_argument('--lang', type=str, help='语言，可选 CHS/EN/JP/KR，默认为 CHS', default='CHS')
 args = parser.parse_args()
 
 StarRailData_path = str(args.source)
