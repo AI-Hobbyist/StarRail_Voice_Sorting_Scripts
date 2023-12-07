@@ -18,7 +18,12 @@ index = str(args.index)
 lang = str(args.lang)
 filter = 'fetter|battle|life|monster'
 
-renameDict = {}
+renameDict = {
+    '丹恒•饮月': '丹恒',
+    'Dan Heng • Imbibitor Lunae': 'Dan Heng',
+    '丹恒・飲月': '丹恒',
+    '단항•음월': '단항'
+}
 
 def is_in(full_path, regx):
     if re.findall(regx, full_path):
@@ -73,8 +78,10 @@ for k in tq.tqdm(data.keys()):
         title_text = data.get(k).get('TitleText')
         if char_name is not None:
             char_name = ren_player(char_name,lang)
-        else:
+        elif title_text is not None:
             char_name = ren_player(title_text,lang)
+        else:
+            char_name = "#Unknown"
         if char_name in renameDict:
             char_name = renameDict[char_name]
         path = data.get(k).get('VoiceName')
