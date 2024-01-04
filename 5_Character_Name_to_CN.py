@@ -18,13 +18,11 @@ txtmap_cn = json.loads(Path(F"{textmap}/TextMapCHS.json").read_text(encoding="ut
 
 for names in tqdm(files):
     charname = os.path.basename(names)
-    charname = charname.replace(".zip","")
     try:
         for key, value in txtmap.items():
             if value == charname:
-                if os.path.exists(f"{src}/{charname}.zip") or os.path.exists(f"{src}/{charname}"):
+                if os.path.exists(f"{src}/{charname}"):
                     cn_name = txtmap_cn[key]
-                    os.rename(f"{src}/{charname}.zip",f"{src}/{cn_name}.zip")
                     os.rename(f"{src}/{charname}",f"{src}/{cn_name}")
     except:
         continue
