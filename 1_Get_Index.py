@@ -202,7 +202,7 @@ def main():
         voiceconfig_dict = json.load(f)
     output = merge_voice_info(content_dict, voiceconfig_dict)
 
-    output_json_path = Dest_Path + '/' + Voice_Language + '.json'
+    output_json_path = Dest_Path + '/' + TextMap_Language + '.json'
     with open(output_json_path, "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 

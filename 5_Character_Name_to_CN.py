@@ -4,14 +4,14 @@ from glob import glob
 from tqdm import tqdm
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--src', type=str, help='源目录', required=True)
-parser.add_argument('--tm', type=str, help='TextMap路径', required=True)
-parser.add_argument('--lang', type=str, help='语言（可选EN/JP/KR）', required=True)
+parser.add_argument('-src','--source', type=str, help='源目录', required=True)
+parser.add_argument('-tm','--textmap', type=str, help='TextMap路径', required=True)
+parser.add_argument('-lang','--language', type=str, help='语言（可选EN/JP/KR）', required=True)
 args = parser.parse_args()
 
-textmap = args.tm
-lang = args.lang
-src = args.src
+textmap = args.textmap
+lang = args.language
+src = args.source
 files = glob(f"{src}\*")
 txtmap = json.loads(Path(f"{textmap}/TextMap{lang}.json").read_text(encoding="utf-8"))
 txtmap_cn = json.loads(Path(F"{textmap}/TextMapCHS.json").read_text(encoding="utf-8"))
