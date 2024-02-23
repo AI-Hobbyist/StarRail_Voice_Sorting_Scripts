@@ -6,14 +6,14 @@ import argparse
 from fnvhash import fnv1_64
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--source', type=str, help='Dim 的星穹铁道数据文件路径', required=True)
-parser.add_argument('--dest', type=str, help='目标路径，可选，默认为当前目录', default='./')
-parser.add_argument('--lang', type=str, help='语言，可选 CHS/EN/JP/KR，默认为 CHS', default='CHS')
+parser.add_argument('-src','--source', type=str, help='Dim 的星穹铁道数据文件路径', required=True)
+parser.add_argument('-dst','--destination', type=str, help='目标路径，可选，默认为当前目录', default='./')
+parser.add_argument('-lang','--language', type=str, help='语言，可选 CHS/EN/JP/KR，默认为 CHS', default='CHS')
 args = parser.parse_args()
 
 StarRailData_path = str(args.source)
-Dest_Path = str(args.dest)
-TextMap_Language = str(args.lang)
+Dest_Path = str(args.destination)
+TextMap_Language = str(args.language)
 
 cutscene = os.path.join(StarRailData_path, "./ExcelOutput/CutSceneConfig.json")
 atlas = os.path.join(StarRailData_path, "./ExcelOutput/VoiceAtlas.json")

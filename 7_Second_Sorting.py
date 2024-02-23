@@ -5,7 +5,7 @@ from glob import glob
 from shutil import move
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-src','--source', type=str, help='待二次分类原神数据集', required=True)
+parser.add_argument('-src','--source', type=str, help='待二次分类星穹铁道数据集', required=True)
 parser.add_argument('-dst','--destination', type=str, help='目标路径', required=True)
 args = parser.parse_args()
 

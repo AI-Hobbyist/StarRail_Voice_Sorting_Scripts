@@ -2,28 +2,25 @@ import json
 import re
 import os
 import argparse
-import tqdm as tq
+from tqdm import tqdm
+from pathlib import Path
+from glob import glob
+from shutil import copy, move
 from pathlib import Path
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--source', type=str, help='未整理数据集目录', required=True)
-parser.add_argument('--index', type=str, help='索引路径', required=True)
-parser.add_argument('--dest', type=str, help='目标路径', required=True)
-parser.add_argument('--lang', type=str, help='语言（可选CHS/EN/JP/KR，默认为CHS）', default="CHS")
+parser.add_argument('-src','--source', type=str, help='未整理数据集目录', required=True)
+parser.add_argument('-ver','--version', type=str, help='版本', required=True)
+parser.add_argument('-dst','--destination', type=str, help='目标路径', required=True)
+parser.add_argument('-lang','--language', type=str, help='语言（可选CHS/EN/JP/KR）', required=True)
+parser.add_argument('-m','--mode', type=str, help='模式(复制(cp)/移动(mv))', default="cp")
 args = parser.parse_args()
 
 source = str(args.source)
-dest = str(args.dest)
-index = str(args.index)
-lang = str(args.lang)
-filter = 'fetter|battle|life|monster'
-
-renameDict = {
-    '丹恒•饮月': '丹恒',
-    'Dan Heng • Imbibitor Lunae': 'Dan Heng',
-    '丹恒・飲月': '丹恒',
-    '단항•음월': '단항'
-}
+dest = str(args.destination)
+language = str(args.language).upper()
+ver = str(args.version)
+mode = str(args.mode)
 
 def is_in(full_path, regx):
     if re.findall(regx, full_path):
@@ -37,64 +34,85 @@ def is_file(full_path):
     else:
         return  False
 
-def has_vaild_content(text):
-    pattern = r'[\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff\u1100-\u11ff\u3130-\u318f\uac00-\ud7afa-zA-Z0-9]+'
-    if re.search(pattern, text):
-        return True
+def get_support_ver():
+    indexs = glob('./Indexs/*')
+    support_vers = []
+    for vers in indexs:
+        version = os.path.basename(vers)
+        support_vers.append(version)
+    versions = '|'.join(support_vers)
+    return versions
+
+
+def get_support_lang(version):
+    if is_in(version, get_support_ver()):
+        support_langs = []
+        indexs = glob(f'./Indexs/{version}/*')
+        for langs in indexs:
+            lang_code = os.path.basename(langs).replace(
+                "_output.json", "").replace(".json", "")
+            support_langs.append(lang_code)
+        return support_langs
     else:
-        return False
-    
-def ren_player(player,lang):
+        print("不支持的版本")
+        exit()
+
+
+def get_path_by_lang(lang):
+    langcodes = get_support_lang(ver)
+    path = ['中文 - Chinese', '英语 - English',  '日语 - Japanese', '韩语 - Korean']
+    try:
+        i = langcodes.index(lang)
+        dest_path = path[i]
+        lang_code = lang
+    except:
+        print("不支持的语言")
+        exit()
+    return lang_code, dest_path
+
+
+langcode, dest_lang = get_path_by_lang(language)
+
+def ren_player(player, lang):
+    langcodes = get_support_lang(ver)
+    player_boy_names = ['开拓者(男)', 'Trailblazer(M)', '開拓者(男)', '개척자(남)']
+    player_girl_names = ['开拓者(女)', 'Trailblazer(F)', '開拓者(女)', '개척자(여)']
     p_name = player
     if p_name == "playerboy" or p_name == "playergirl":
         if p_name == "playerboy":
-            if lang == "CHS":
-                p_name = "开拓者(男)"
-            if lang == "EN":
-                p_name = "Trailblazer(M)"
-            if lang == "JP":
-                p_name = "開拓者(男)"
-            if lang == "KR":
-                p_name = "개척자(남)"
+            i = langcodes.index(lang)
+            p_name = player_boy_names[i]
         if p_name == "playergirl":
-            if lang == "CHS":
-                p_name = "开拓者(女)"
-            if lang == "EN":
-                p_name = "Trailblazer(F)"
-            if lang == "JP":
-                p_name = "開拓者(女)"
-            if lang == "KR":
-                p_name = "개척자(여)"
+            i = langcodes.index(lang)
+            p_name = player_girl_names[i]
     else:
         p_name = player
     return p_name
 
-f = open(index, encoding='utf8')
-data = json.load(f)
-for k in tq.tqdm(data.keys()):
+indexfile = Path(f'./Indexs/{ver}/{langcode}.json').read_text(encoding="utf-8")
+data = json.loads(indexfile)
+for k in tqdm(data.keys()):
     try:
         text = data.get(k).get('ContentText')
         char_name = data.get(k).get('Speaker')
         title_text = data.get(k).get('TitleText')
         if char_name is not None:
-            char_name = ren_player(char_name,lang)
+            char_name = ren_player(char_name,langcode)
         elif title_text is not None:
-            char_name = ren_player(title_text,lang)
+            char_name = ren_player(title_text,langcode)
         else:
             char_name = "#Unknown"
-        if char_name in renameDict:
-            char_name = renameDict[char_name]
         path = data.get(k).get('VoiceName')
         wav_source = source + '/' + path
         wav_file = os.path.basename(path)
-        if has_vaild_content(text) == True and char_name is not None:
-            dest_dir = dest + '/' + char_name
-            lab_path = dest_dir + '/' + wav_file
-            lab_path = lab_path.replace(".wav",".lab")
-            if is_in(path, filter) == False and is_file(wav_source) == True:
-                if not os.path.exists(dest_dir):
-                    os.makedirs(dest_dir)
-                Path(lab_path).write_text(text, encoding='utf-8')
+        if char_name is not None:
+            vo_dest_dir = f"{dest}/{dest_lang}/数据集 - Datasets/{char_name}"
+            lab_file = wav_file.replace(".wav",".lab")
+            vo_lab_path = f"{vo_dest_dir}/{lab_file}"
+            if is_file(wav_source) == True:
+                if not os.path.exists(vo_dest_dir):
+                    Path(f"{vo_dest_dir}").mkdir(parents=True)
+                dest_path = vo_lab_path            
+                Path(dest_path).write_text(text, encoding='utf-8')
     except:
         pass
-f.close()
