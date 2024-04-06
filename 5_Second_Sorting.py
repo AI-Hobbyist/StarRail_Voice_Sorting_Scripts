@@ -13,7 +13,7 @@ source = str(args.source)
 dest = str(args.destination)
 
 index = Path("./Data/Sorted.json").read_text(encoding="utf-8")
-lab_src = glob(f"{source}/**/*.lab")
+lab_src = glob(f"{source}/**/*.lab",recursive=True)
 data = json.loads(index)
 
 for lab_file in tqdm(lab_src):
