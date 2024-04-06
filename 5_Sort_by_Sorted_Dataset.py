@@ -22,11 +22,10 @@ for lab_file in tqdm(lab_src):
         lab_file_name = os.path.basename(lab_file)
         wav_file_name = lab_file_name.replace(".lab",".wav")
         dst_dir = data[lab_file_name]
-        dir_name = os.path.dirname(dst_dir)
-        if not os.path.exists(f"{dest}/{dir_name}"):
-            Path(f"{dest}/{dir_name}").mkdir(parents=True)
-        move(f"{src_dir}/{lab_file_name}",f"{dest}/{dir_name}/{lab_file_name}")
-        move(f"{src_dir}/{wav_file_name}",f"{dest}/{dir_name}/{wav_file_name}")
+        if not os.path.exists(f"{dest}/{dst_dir}"):
+            Path(f"{dest}/{dst_dir}").mkdir(parents=True)
+        move(f"{src_dir}/{lab_file_name}",f"{dest}/{dst_dir}/{lab_file_name}")
+        move(f"{src_dir}/{wav_file_name}",f"{dest}/{dst_dir}/{wav_file_name}")
     except:
         tqdm.write(f"提示：无法找到文件名 {lab_file_name} 对应的说话人，如果最终数量不多，可无视")
         pass
