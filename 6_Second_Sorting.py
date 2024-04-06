@@ -55,15 +55,15 @@ for file in tqdm(labfiles):
         Path(lab_path).write_text(labels,encoding='utf-8')
         tqdm.write(f"已清除标注文件 {src}/{lab_file_name} 中的html标签：{tag_content(lab_content)}\n-----------")
     if not check_content(lab_content,vaild_content):
-        out_path = f"{dest}/其它语音 - Others/{spk}"
+        out_path = f"{dest}/{spk}/其它语音 - Others"
     elif is_in(file,conv):
-        out_path = f"{dest}/多人对话 - Conversation/{spk}" 
+        out_path = f"{dest}/{spk}/多人对话 - Conversation" 
     elif check_content(lab_content,placeholder):
-        out_path = f"{dest}/带变量语音 - Placeholder/{spk}"
+        out_path = f"{dest}/{spk}/带变量语音 - Placeholder"
     elif is_in(file,monster):
-        out_path = f"{dest}/怪物语音 - Monster/{spk}"
+        out_path = f"{dest}/{spk}/怪物语音 - Monster"
     elif is_in(file,battle):
-        out_path = f"{dest}/战斗语音 - Battle/{spk}"
+        out_path = f"{dest}/{spk}/战斗语音 - Battle"
     else:
         continue
     if not os.path.exists(out_path):

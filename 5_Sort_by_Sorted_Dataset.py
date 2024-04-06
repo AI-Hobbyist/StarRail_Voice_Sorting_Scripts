@@ -12,7 +12,7 @@ args = parser.parse_args()
 source = str(args.source)
 dest = str(args.destination)
 
-index = Path("./file_index.json").read_text(encoding="utf-8")
+index = Path("./Data/Sorted.json").read_text(encoding="utf-8")
 lab_src = glob(f"{source}/**/*.lab")
 data = json.loads(index)
 

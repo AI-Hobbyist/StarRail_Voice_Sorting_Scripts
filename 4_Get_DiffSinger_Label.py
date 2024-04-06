@@ -20,6 +20,9 @@ dest = str(args.destination)
 language = str(args.language).upper()
 ver = str(args.version)
 
+if not os.path.exists(dest):
+    Path(dest).mkdir(parents=True)
+
 def is_in(full_path, regx):
     if re.findall(regx, full_path):
         return True
@@ -101,10 +104,10 @@ for k in tqdm(data.keys()):
         else:
             char_name = "#Unknown"
         path = data.get(k).get('VoiceName')
-        wav_source = source + '/' + path
+        wav_source = f"{source}/{dest_lang}/{path}"
         wav_file = os.path.basename(path)
         if char_name is not None:
-            vo_dest_dir = f"{dest}/{dest_lang}/数据集 - Datasets/{char_name}"
+            vo_dest_dir = f"{dest}/{dest_lang}/{char_name}"
             lab_file = wav_file.replace(".wav",".lab")
             vo_lab_path = f"{vo_dest_dir}/{lab_file}"
             if is_file(wav_source) == True:
