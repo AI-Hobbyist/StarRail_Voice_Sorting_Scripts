@@ -5,8 +5,8 @@ from glob import glob
 from shutil import move
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-src','--source', type=str, help='未整理数据集目录', required=True)
-parser.add_argument('-dst','--destination', type=str, help='目标路径', required=True)
+parser.add_argument('-src','--source', type=str, help='未整理数据集目录', default="./Data/wav")
+parser.add_argument('-dst','--destination', type=str, help='目标路径', default="./Data/named")
 parser.add_argument('-ver','--version', type=str, help='版本', required=True)
 parser.add_argument('-lang','--language', type=str, help='语言（可选CHS/EN/JP/KR）', required=True)
 args = parser.parse_args()
@@ -71,7 +71,7 @@ for wav in tqdm(files):
         dest_file = dest_file.replace(".wem",".wav")
         dis_dir = os.path.dirname(dest_file)
         if not os.path.exists(dis_dir):
-            os.makedirs(dis_dir)
+            Path(dis_dir).mkdir(parents=True)
         move(wav, dest_file)
     except:
         pass

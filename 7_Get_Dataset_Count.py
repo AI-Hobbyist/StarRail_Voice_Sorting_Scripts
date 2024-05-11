@@ -3,7 +3,7 @@ from tqdm import tqdm
 from glob import glob
 
 parser = argparse.ArgumentParser(description='统计指定目录下所有的文件夹中的wav数量，wav总时长，lab标注数量，并写入csv表格')
-parser.add_argument('-src','--input_path', type=str, help='源目录')
+parser.add_argument('-src','--input_path', type=str, default="./Data/second_sorted")
 parser.add_argument('-dst','--output_path', type=str, help='csv输出目录')
 args = parser.parse_args()
 
