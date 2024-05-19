@@ -44,7 +44,7 @@ stats = {
     "带变量语音": [],
     "多人对话": [],
     "无标注语音数量": [],
-    "": [],
+    "|": [],
     "无需处理语音数量": [],
     "无需处理标注数量": [],
     "无需处理语音时长": [],
@@ -92,7 +92,7 @@ for dirs in tqdm(src,desc = "总进度", dynamic_ncols = True, leave = True):
     stats["带变量语音"].append(f"{p_wavs} | {p_labs} | {dur(p_durs)}")
     stats["多人对话"].append(f"{c_wavs} | {c_labs} | {dur(c_durs)}")
     stats["无标注语音数量"].append(t_wavs - t_labs)
-    stats[""].append(f"")
+    stats["|"].append(f"")
     stats["无需处理语音数量"].append(wavs)
     stats["无需处理标注数量"].append(labs)
     stats["无需处理语音时长"].append(dur(durs))
