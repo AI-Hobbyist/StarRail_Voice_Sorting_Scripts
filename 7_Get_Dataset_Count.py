@@ -38,6 +38,13 @@ def get_numbers(path):
 # 初始化统计字典
 stats = {
     "说话人": [],
+    "无需处理语音数量": [],
+    "无需处理标注数量": [],
+    "无需处理语音时长": [],
+    "总语音数量": [],
+    "总标注数量": [],
+    "总语音时长": [],
+    "|": [],
     "战斗语音数量": [],
     "战斗语音标注数量": [],
     "战斗语音总时长": [],
@@ -52,14 +59,7 @@ stats = {
     "带变量语音总时长": [],
     "多人对话语音数量": [],
     "多人对话标注数量": [],
-    "多人对话语音总时长": [],
-    "|": [],
-    "无需处理语音数量": [],
-    "无需处理标注数量": [],
-    "无需处理语音时长": [],
-    "总语音数量": [],
-    "总标注数量": [],
-    "总语音时长": []
+    "多人对话语音总时长": []
 }
 
 stats_total = {
@@ -100,6 +100,13 @@ for dirs in tqdm(src,desc = "总进度", dynamic_ncols = True, leave = True):
     t_labs = labs + b_labs + m_labs + o_labs + p_labs + c_labs
     t_durs = durs + b_durs + m_durs + o_durs + p_durs + c_durs
 
+    stats["无需处理语音数量"].append(wavs)
+    stats["无需处理标注数量"].append(labs)
+    stats["无需处理语音时长"].append(dur(durs))
+    stats["总语音数量"].append(t_wavs)
+    stats["总标注数量"].append(t_labs)
+    stats["总语音时长"].append(dur(t_durs))   
+    stats["|"].append(f"|")
     stats["战斗语音数量"].append(b_wavs)
     stats["战斗语音标注数量"].append(b_labs)
     stats["战斗语音总时长"].append(dur(b_durs))
@@ -115,13 +122,6 @@ for dirs in tqdm(src,desc = "总进度", dynamic_ncols = True, leave = True):
     stats["多人对话语音数量"].append(c_wavs)
     stats["多人对话标注数量"].append(c_labs)
     stats["多人对话语音总时长"].append(dur(c_durs))
-    stats["|"].append(f"")
-    stats["无需处理语音数量"].append(wavs)
-    stats["无需处理标注数量"].append(labs)
-    stats["无需处理语音时长"].append(dur(durs))
-    stats["总语音数量"].append(t_wavs)
-    stats["总标注数量"].append(t_labs)
-    stats["总语音时长"].append(dur(t_durs))
     
 # 写入CSV文件
 csv_file = args.output_path
