@@ -58,7 +58,7 @@ stats = {
     "带变量语音标注数量": [],
     "带变量语音总时长": [],
     "多人对话语音数量": [],
-    "多人对话标注数量": [],
+    "多人对话语音标注数量": [],
     "多人对话语音总时长": []
 }
 
@@ -120,7 +120,7 @@ for dirs in tqdm(src,desc = "总进度", dynamic_ncols = True, leave = True):
     stats["带变量语音标注数量"].append(p_labs)
     stats["带变量语音总时长"].append(dur(p_durs))
     stats["多人对话语音数量"].append(c_wavs)
-    stats["多人对话标注数量"].append(c_labs)
+    stats["多人对话语音标注数量"].append(c_labs)
     stats["多人对话语音总时长"].append(dur(c_durs))
     
 # 写入CSV文件
