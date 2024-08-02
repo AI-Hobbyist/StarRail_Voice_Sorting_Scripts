@@ -5,12 +5,10 @@ import subprocess
 import re, os
 
 parser = argparse.ArgumentParser(description="数据集一键整理")
-parser.add_argument("-ver","--version", type=str, help="版本", required=True)
 parser.add_argument("-lang","--language", type=str, help="语言（可选CHS/JP/EN/KR）", required=True)
 args = parser.parse_args()
 
 lang = args.language
-ver = args.version
 
 def is_in(full_path, regx):
     if re.findall(regx, full_path):
