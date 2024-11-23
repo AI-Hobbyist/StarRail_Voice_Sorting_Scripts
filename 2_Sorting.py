@@ -7,6 +7,12 @@ from glob import glob
 from shutil import copy, move
 from pathlib import Path
 
+renameDict = {
+    '睡蕉社•能人244•三月七': '三月七',
+    '睡蕉社•能人52•莫奈拉': '莫奈拉',
+}
+
+
 def crean_text(text):
     html_tag = re.compile(r'<.*?>')
     text = re.sub(html_tag,'',text)
@@ -41,6 +47,8 @@ def sorting_voice(src,dst,mode,lang):
     for i, row in tqdm(df.iterrows(),desc="正在整理数据集...",total=len(df)):
         character = row['角色']
         character = re.sub(r'<.*?>', '', character)
+        if character in renameDict:
+            character = renameDict[character]
         voice_hash = row['语音哈希']
         voice_file = row['语音文件名']
         text = str(row['语音文本'])
