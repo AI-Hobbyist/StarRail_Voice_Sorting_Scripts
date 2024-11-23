@@ -40,6 +40,7 @@ def sorting_voice(src,dst,mode,lang):
     df = pd.read_excel(f"./Indexs/{langcode}.xlsx")
     for i, row in tqdm(df.iterrows(),desc="正在整理数据集...",total=len(df)):
         character = row['角色']
+        character = re.sub(r'<.*?>', '', character)
         voice_hash = row['语音哈希']
         voice_file = row['语音文件名']
         text = str(row['语音文本'])
