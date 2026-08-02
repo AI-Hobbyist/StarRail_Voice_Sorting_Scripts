@@ -1,0 +1,4 @@
+# Python dependencies for Voice_Sorting.py
+# Verified with Python 3.12.13.
+pandas==3.0.1
+openpyxl==3.1.5
