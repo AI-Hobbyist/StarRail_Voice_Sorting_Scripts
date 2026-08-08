@@ -4,8 +4,9 @@
 
 ## 脚本
 
-- `Voice_Sorting.py`：统一处理流程，整合原先 1～5 步。
+- `Voice_Sorting.py`：统一处理流程：解包、转码、整理、二次分类、清理标签。
 - `6_Merge_Language_Xlsx.py`：独立合并同语言索引 XLSX。
+- `7_Statistics.py`：独立生成数据统计 XLSX。
 - `Deprecated/`：旧分步脚本备份，不再作为推荐入口。
 
 ## 安装
@@ -51,16 +52,10 @@ python .\Voice_Sorting.py -l CHS --skip-unpack --dry-run `
 ## 完整处理流程
 
 ```powershell
-python .\Voice_Sorting.py -l CHS `
-  --game "StarRail" `
-  --version "4.4"
+python .\Voice_Sorting.py -l CHS
 ```
 
-该命令依次执行：PCK 解包、递归 WEM 转 WAV、按 XLSX 整理、二次分类、清理 LAB 中的 HTML 标签，并输出：
-
-```text
-StarRail_4.4_数据统计.xlsx
-```
+该命令依次执行：PCK 解包、递归 WEM 转 WAV、按 XLSX 整理、二次分类、清理 LAB 中的 HTML 标签。
 
 常用参数：
 
@@ -68,7 +63,30 @@ StarRail_4.4_数据统计.xlsx
 - `--mode cp|mv`：整理时复制或移动 WAV，默认 `cp`。
 - `--wem`、`--wav`：覆盖 WEM 输入与 WAV 输出目录。
 - `--final`：覆盖最终分类输出目录。
+
+## 生成数据统计
+
+整理完成后，用独立工具 `7_Statistics.py` 从 `Data/second_sorted` 生成按角色和类别的语音数量、标注数量与总时长统计：
+
+```powershell
+python .\7_Statistics.py -l CHS `
+  --game "StarRail" `
+  --version "4.4"
+```
+
+输出：
+
+```text
+StarRail_4.4_数据统计.xlsx
+```
+
+常用参数：
+
+- `--dataset`：数据集目录，默认 `Data/second_sorted`。
+- `--template`：统计模板 XLSX，默认 `数据统计_模板.xlsx`。
+- `--game`、`--version`：游戏名与版本号，用于输出文件名。
 - `--stats-dir`：指定统计 XLSX 输出目录。
+- `--dry-run`：仅打印输出路径，不写入文件。
 
 ## 合并上级索引 XLSX
 
