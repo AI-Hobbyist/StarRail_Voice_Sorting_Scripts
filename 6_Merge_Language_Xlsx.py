@@ -34,27 +34,39 @@ def read_index(path: Path) -> list[dict[str, str]]:
     return result
 
 
-def merge_indexes(paths: list[Path]) -> tuple[list[dict[str, str]], dict[str, int]]:
+def merge_indexes(paths: list[Path], existing: list[dict[str, str]] | None = None) -> tuple[list[dict[str, str]], dict[str, int]]:
     merged: dict[tuple[str, str, str], dict[str, str]] = {}
+    # 增量基线：先载入已有输出——源文件中已删除的行会保留在结果里，
+    # 但新输入里再次出现的同 key 行会用新内容覆盖更新。
+    for row in existing or []:
+        battle = row["是否为战斗语音"] == "true"
+        key = ("battle" if battle else "voice", row["语音哈希"], row["语音文件名"])
+        merged[key] = row
+    kept = len(merged)
     total = 0
+    added = 0
+    updated = 0
     for path in paths:
         for row in read_index(path):
             total += 1
             battle = row["是否为战斗语音"] == "true"
             key = ("battle" if battle else "voice", row["语音哈希"], row["语音文件名"])
-            old = merged.get(key)
-            if old is None:
+            if key not in merged:
+                # 不存在的新行：补充进去。
                 merged[key] = row
-                continue
-            # Preserve the first deterministic row but fill any missing fields;
-            # a battle marker always wins over an empty legacy value.
-            for column in COLUMNS:
-                if not old[column] and row[column]:
-                    old[column] = row[column]
-            if battle:
-                old["是否为战斗语音"] = "true"
+                added += 1
+            else:
+                # 同 key：用新输入的内容覆盖更新；多个源文件重复出现时后者胜出。
+                merged[key] = row
+                updated += 1
     records = sorted(merged.values(), key=lambda row: (row["语音文件名"], row["语音哈希"]))
-    return records, {"input_rows": total, "merged_rows": len(records), "duplicates_removed": total - len(records)}
+    return records, {
+        "input_rows": total,
+        "existing_rows": kept,
+        "added_rows": added,
+        "updated_rows": updated,
+        "merged_rows": len(records),
+    }
 
 
 def main() -> None:
@@ -74,14 +86,16 @@ def main() -> None:
             print(f"[{language}] 未找到输入 XLSX，跳过")
             continue
         output = args.output_dir / f"{language}.xlsx"
-        records, summary = merge_indexes(inputs)
+        # 读取已有输出作为增量基线；不存在时从空开始。
+        existing = read_index(output) if output.exists() else []
+        records, summary = merge_indexes(inputs, existing)
         with pd.ExcelWriter(output, engine="openpyxl") as writer:
             pd.DataFrame(records, columns=COLUMNS).to_excel(writer, index=False, sheet_name="语音索引", freeze_panes=(1, 0))
             sheet = writer.sheets["语音索引"]
             sheet.auto_filter.ref = sheet.dimensions
             for column, width in zip("ABCDEF", (19, 58, 24, 70, 30, 16)):
                 sheet.column_dimensions[column].width = width
-        print(f"[{language}] {len(inputs)} 个文件：{summary['input_rows']:,} → {summary['merged_rows']:,}；{output}")
+        print(f"[{language}] {len(inputs)} 个文件：原有 {summary['existing_rows']:,} + 新增 {summary['added_rows']:,}（更新 {summary['updated_rows']:,}）→ 共 {summary['merged_rows']:,}；{output}")
 
 
 if __name__ == "__main__":
